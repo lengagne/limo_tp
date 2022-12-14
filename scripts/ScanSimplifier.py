@@ -35,10 +35,7 @@ def simplify_laser( laser):
         current_angle = laser.angle_min + i * laser.angle_increment        
         min_angle = SimpleLaser.angle_min + (j) * SimpleLaser.angle_increment
         max_angle = SimpleLaser.angle_min + (j+1) * SimpleLaser.angle_increment
-        print(current_angle, min_angle,max_angle,laser.ranges[i] )
         if ( current_angle > max_angle ):
-            print("value =" , SimpleLaser.ranges[j])
-            print("Increase J : ", j)
             j = j+1
             if j >= maxJ:
                 break

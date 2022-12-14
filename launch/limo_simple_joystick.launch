@@ -23,11 +23,11 @@
   </node>
   
   
-  <node pkg="rviz" type="rviz" name="laser_rviz" args="-d $(find limo_tp)/rviz/lidar_view.rviz"/>    
+  
   
   <group if="$(eval arg('simulation') == 'false')">    
     <node name="scan_simplifier" pkg="limo_tp" type="ScanSimplifier.py" output="screen"/>
-    
+    <node pkg="rviz" type="rviz" name="laser_rviz" args="-d $(find limo_tp)/rviz/lidar_view.rviz"/>      
     
   </group>
   

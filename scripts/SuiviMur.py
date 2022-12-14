@@ -23,6 +23,9 @@ speed = 0.0
 omega = 0.0
 larg_couloir = 0.3
 
+speed_max  = 0.5
+omega_max = 2.5
+
 droite_gauche = True
 
 
@@ -53,10 +56,12 @@ def callback_laser(laser, odometry):
     global speed
     global omega
     global larg_couloir
+    global omega_max
+    global speed_max
     
     #  code a mettre
     
-    print(laser.ranges[0])  # affichage de la premiere info du capteur
+    #print(laser.ranges[0])  # affichage de la premiere info du capteur
     
     # moyennage du laser 147
     dA =  laser.ranges[15]
@@ -81,7 +86,7 @@ def callback_laser(laser, odometry):
         theta = math.atan( (x2-x1) / (y2-y1))
         
         d= (dD+dE)/2    
-        dref = 0.3
+        dref = 0.5
     else:
         x1 = dA * sin(-1.5)
         x2 = dB * sin(-1.3)
@@ -92,10 +97,10 @@ def callback_laser(laser, odometry):
         theta = math.atan( (x2-x1) / (y2-y1))
         
         d=-(dA+dB)/2           
-        dref =- 0.3
+        dref =- 0.5
         
-    print(theta)
-    print(d)
+    #print(theta)
+    #print(d)
 
     #quaternion=(
         #odometry.pose.pose.orientation.x,
@@ -114,12 +119,22 @@ def callback_laser(laser, odometry):
     # dexieme version garde une distance constante au mur
     
     Kd=5
-    u1 = 0.5
+    u1 = 0.3
     u2 = - u1/ (0.2*cos(theta))*sin(theta) - u1/cos(theta)* Kd*(d-dref)
         
     move_cmd.linear.x = u1
     move_cmd.angular.z = u2
-    print(move_cmd)
+    
+    if move_cmd.linear.x > speed_max:
+        move_cmd.linear.x = speed_max
+    if move_cmd.linear.x < -speed_max:
+        move_cmd.linear.x = -speed_max
+
+    if move_cmd.angular.z > omega_max:
+        move_cmd.angular.z = omega_max
+    if move_cmd.angular.z < -omega_max:
+        move_cmd.angular.z = -omega_max
+        
         
     pub.publish(move_cmd)
     
@@ -127,7 +142,11 @@ def callback_laser(laser, odometry):
 
 if __name__ == '__main__':
     
-    rospy.init_node('command_by_laser', anonymous=True)
+    rospy.init_node('SuiviMur', anonymous=True)
+    
+    speed_max = rospy.get_param('~speed_max', 0.5)
+    omega_max = rospy.get_param('~omega_max', 2.5)
+    
     laser_sub = message_filters.Subscriber("/simple_scan", LaserScan)
     #joy_sub = rospy.Subscriber("/joy", Joy, callbackjoy)
     odometry_sub = message_filters.Subscriber("/odom", Odometry)
