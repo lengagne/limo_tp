@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+     <include file="$(find limo_tp)/launch/limo_simple_joystick.launch">
+        <arg name="mode_robot_environnement" value="reel"/>
+        <arg name="speed_max_autorise" value="0.2"/>
+        <arg name="omega_max_autorise" value="1.0"/>
+    </include>
+    
+    <node name="suivi_mur" pkg="limo_tp" type="SuiviMur.py" output="screen"/>
+  
+</launch>
+

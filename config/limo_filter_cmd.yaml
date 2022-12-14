@@ -1,0 +1,18 @@
+select:
+  twist: true
+  ackerman_stamped: false
+  start_command_mode: "manu"  #select from "auto" or "manu" to choose start mode
+
+subscribe:
+  twist_manu: /manu_cmd_vel
+  twist_auto: /auto_cmd_vel
+  ackerman_manu: /ras
+  ackerman_auto: /ras
+
+publish:
+  twist_cmd: /cmd_vel
+  ackerman_cmd: /ras
+  
+service:
+  manu_action_name: "limo_manu_mode"
+  auto_action_name: "limo_auto_mode"

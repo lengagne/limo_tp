@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name="wall" default="1"/>
+    
+    <include file="$(find limo_challenges)/launch/limo_wall.launch">
+        <arg name="wall" value="$(arg wall)"/>
+    </include>
+    
+     <include file="$(find limo_tp)/launch/limo_simple_joystick.launch">
+        <arg name="mode_robot_environnement" value="reel"/>
+        <arg name="speed_max_autorise" value="0.2"/>
+        <arg name="omega_max_autorise" value="1.0"/>
+        <arg name="simulation" value="true"/>
+    </include>
+    
+    <node name="suivi_mur" pkg="limo_tp" type="SuiviMur.py" output="screen">
+        
+    </node>
+  
+</launch>
+

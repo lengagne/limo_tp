@@ -1,0 +1,7 @@
+scan_filter_chain:
+- name: laser_cutoff
+  type: laser_filters/LaserScanAngularBoundsFilter
+  params:
+    lower_angle: -0.2  #-1.57=-90 (90 vers la droite)
+    upper_angle:  0.2   #+1.57=90° (90 vers la gauche)
+ 
