@@ -38,6 +38,7 @@ namespace
     const std::string all_publish_message_type = "all";
     std::string publish_message_twist("/cmd_vel_");
     bool twist_mode(false);
+    bool use_joy(false);
     bool cmd_manu_mode(true);
     bool cmd_auto_mode(false);
     std::string sub_twist_manu("/joy_vel_");
@@ -52,11 +53,16 @@ namespace
         node_private.param<bool>("select/twist", twist_mode, bool(true));
         node_private.param<std::string>("select/start_command_mode", start_command, "manu");
 
+        node_private.param<bool>("use_joy", use_joy, bool(true));
+        std::cout<<"use_joy = " << use_joy <<std::endl;
+        
         if(twist_mode)
         {
             node_private.param<std::string>("subscribe/twist_manu", sub_twist_manu, "/joy_vel");
             node_private.param<std::string>("subscribe/twist_auto", sub_twist_auto, "/cws_vel");
             node_private.param<std::string>("publish/twist_cmd", pub_twist_name, "/cmd_vel");
+            
+            
             std::cout << "DBG : DECLARE SUBSCRIBE " << std::endl;
             ROS_INFO_STREAM("sub_twist_manu : " << sub_twist_manu);
             ROS_INFO_STREAM("sub_twist_auto : " << sub_twist_auto);
@@ -65,15 +71,29 @@ namespace
         
         if (start_command.compare(str_manu) == 0)
         {
-            std::cout << "DBG : start_command=MANU" << std::endl;
-            cmd_manu_mode = true;
-            cmd_auto_mode = false;
+            if (use_joy)
+            {
+                std::cout << "DBG : start_command=MANU" << std::endl;
+                cmd_manu_mode = true;
+                cmd_auto_mode = false;
+            }else
+            {
+                cmd_manu_mode = false;
+                cmd_auto_mode = true;                
+            }
         }
         else if (start_command.compare(str_auto) == 0)
         {
-            std::cout << "DBG : start_command=AUTO" << std::endl;
-            cmd_manu_mode = false;
-            cmd_auto_mode = true;
+            if (use_joy)
+            {                        
+                std::cout << "DBG : start_command=AUTO" << std::endl;
+                cmd_manu_mode = false;
+                cmd_auto_mode = true;
+            }else
+            {
+                cmd_manu_mode = false;
+                cmd_auto_mode = true;                
+            }
         }
         else
         {
@@ -99,26 +119,41 @@ namespace
     
     void callback_twist_auto(const geometry_msgs::Twist& tw)
     {
-        if(cmd_auto_mode)
+        if(cmd_auto_mode )
             pub_twist.publish(tw);
     }
 
     
     bool setManuMode(std_srvs::Trigger::Request&, std_srvs::Trigger::Response& response)
     {
-        std::cout << "DBG : setManuMode called since XBox paddle A Touch" << std::endl;
-        cmd_manu_mode = true;
-        cmd_auto_mode = false;
+        if (use_joy)
+        {
+            std::cout << "DBG : setManuMode called since XBox paddle A Touch" << std::endl;
+            cmd_manu_mode = true;
+            cmd_auto_mode = false;
+        }else
+        {
+            cmd_manu_mode = false;
+            cmd_auto_mode = true;                
+        }
         response.success = true;
         return true;
     }
 
     bool setAutoMode(std_srvs::Trigger::Request&, std_srvs::Trigger::Response& response)
     {
-        std::cout << "DBG : setAutoMode called since XBox paddle B Touch" << std::endl;
-        cmd_manu_mode = false;
-        cmd_auto_mode = true;
+        if (use_joy)
+        {
+            std::cout << "DBG : setAutoMode called since XBox paddle B Touch" << std::endl;
+            cmd_manu_mode = false;
+            cmd_auto_mode = true;
+        }else
+        {
+            cmd_manu_mode = false;
+            cmd_auto_mode = true;                
+        }
         response.success = true;
+        
         return true;
     }
     
