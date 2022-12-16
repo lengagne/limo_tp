@@ -2,17 +2,17 @@
 <launch>
     <arg name="use_joy" default="true"/>
     <arg name="joy_dev" default="/dev/input/js0"/>
+    <arg name="speed_max" default="0.5"/>
+    <arg name="omega_max" default="2.0"/>
     
-    <include file="$(find limo_challenges)/launch/limo_aruco.launch">
-    </include>    
     
      <include file="$(find limo_tp)/launch/limo_simple_joystick.launch">
-<!--         <arg name="mode_robot_environnement" value="reel"/> -->
-        <arg name="speed_max_autorise" value="0.2"/>
-        <arg name="omega_max_autorise" value="1.0"/>
+        <arg name="mode_robot_environnement" value="reel"/>
+        <arg name="speed_max" value="$(arg speed_max)"/>
+        <arg name="omega_max" value="$(arg omega_max)"/>
         <arg name="simulation" value="true"/>
         <arg name="use_joy" value="$(arg use_joy)"/>        
-        <arg name="dev" value="$(arg joy_dev)" />
+        <arg name="joy_dev" value="$(arg joy_dev)" />
     </include>
     
     <node name="target" pkg="limo_tp" type="SuiviTarget.py" output="screen"/>
